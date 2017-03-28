@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
@@ -14,6 +15,8 @@ type TriggerRuntime struct {
 	TriggerConf
 	status string
 	client MQTT.Client
+	hash   string
+	state  string
 }
 
 var triggers map[string]*TriggerRuntime
@@ -22,16 +25,64 @@ func TriggerRuntimeInit(server *Server) {
 	triggers = make(map[string]*TriggerRuntime)
 }
 
-func runtimeTriggerSet(triggerConf *TriggerConf) {
-	trigger := new(TriggerRuntime)
+func TriggerInit(trigger *TriggerRuntime, triggerConf *TriggerConf, triggerDefault *TriggerDefaults) {
 	trigger.TriggerConf = *triggerConf
-	if triggers[trigger.Name] != nil {
-		runtimeTriggerDelete(trigger.Name)
-	}
-	triggers[trigger.Name] = trigger
 
-	log.Println(triggerLogPrefix+" Runtime create - ", triggerConfPath, trigger.Name, trigger)
-	trigger.install()
+	if trigger.Username == "" {
+		trigger.Username = triggerDefault.Username
+	}
+
+	if trigger.Password == "" {
+		trigger.Password = triggerDefault.Password
+	}
+
+	if trigger.Broker == "" {
+		trigger.Broker = triggerDefault.Broker
+	}
+
+	if trigger.URL == "" {
+		trigger.URL = triggerDefault.URL + "/" + trigger.Name
+	} else if trigger.URL[0] == '/' {
+		trigger.URL = triggerDefault.URL + trigger.URL
+	}
+
+	if trigger.ClientId == "" {
+		trigger.ClientId = triggerDefault.ClientID + "-" + trigger.Name
+	}
+
+	if trigger.Topic == "" {
+		trigger.Topic = trigger.Name
+	}
+
+	if len(trigger.Headers) == 0 {
+		trigger.Headers = trigger.Headers
+	}
+
+	trigger.hash = trigger.URL +
+		strings.Join(trigger.Headers, "") +
+		trigger.Broker +
+		trigger.Username +
+		trigger.Password +
+		trigger.ClientId +
+		trigger.Topic
+}
+
+func runtimeTriggerSet(triggerConf *TriggerConf, triggerDefaults *TriggerDefaults) {
+	trigger := new(TriggerRuntime)
+
+	TriggerInit(trigger, triggerConf, triggerDefaults)
+
+	if triggers[trigger.Name] == nil || triggers[trigger.Name].hash != trigger.hash {
+		if triggers[trigger.Name] == nil {
+			runtimeTriggerDelete(trigger.Name)
+		}
+		triggers[trigger.Name] = trigger
+		log.Println(triggerLogPrefix+" Runtime create - ", triggerConfPath, trigger.Name, trigger)
+		trigger.state = "installed"
+		go trigger.installWithRetry()
+	} else {
+		log.Println(triggerLogPrefix+" Runtime not changed - ", triggerConfPath, trigger.Name, trigger)
+	}
 }
 
 func runtimeTriggerDelete(name string) {
@@ -82,12 +133,27 @@ func (t *TriggerRuntime) processMessage(mqttclient MQTT.Client, msg MQTT.Message
 	}
 }
 
+func (t *TriggerRuntime) installWithRetry() {
+	delay := 1 * time.Second
+	for t.state == "installed" {
+		err := t.install()
+		if err == nil {
+			break
+		}
+		time.Sleep(delay)
+		delay = delay * 2
+		if delay > 60*time.Second {
+			delay = 60 * time.Second
+		}
+	}
+}
+
 func (t *TriggerRuntime) install() error {
 	if strings.HasPrefix(t.Broker, "mqtt://") {
 		t.Broker = "tcp://" + strings.TrimPrefix(t.Broker, "mqtt://")
 	}
 	opts := MQTT.NewClientOptions().AddBroker(t.Broker)
-	//opts.SetClientID(s.Service.MqttClientId)
+	opts.SetClientID(t.ClientId)
 	opts.SetUsername(t.Username)
 	opts.SetPassword(t.Password)
 	opts.SetDefaultPublishHandler(t.processMessage)
@@ -110,8 +176,11 @@ func (t *TriggerRuntime) install() error {
 	//at a maximum qos of zero, wait for the receipt to confirm the subscription
 	if token := t.client.Subscribe(t.Topic, 0, nil); token.Wait() && token.Error() != nil {
 		log.Errorln(triggerLogPrefix+"Runtime - Subscribe", t.ClientId, t.Topic, token.Error())
+		t.client.Disconnect(0)
+		t.client = nil
 		return token.Error()
 	}
+
 	log.Println(triggerLogPrefix+" Runtime - Connected to MQTT Broker",
 		"clientId=", t.ClientId,
 		"username=", t.Username,
@@ -122,9 +191,12 @@ func (t *TriggerRuntime) install() error {
 }
 
 func (t *TriggerRuntime) uninstall() {
-	if token := t.client.Unsubscribe(t.Topic); token.Wait() && token.Error() != nil {
-		log.Errorln(triggerLogPrefix+"Runtime - Unsubscribe", t.ClientId, t.Topic, token.Error())
-	}
+	t.state = "uninstalled"
+	if t.client != nil {
+		if token := t.client.Unsubscribe(t.Topic); token.Wait() && token.Error() != nil {
+			log.Errorln(triggerLogPrefix+"Runtime - Unsubscribe", t.ClientId, t.Topic, token.Error())
+		}
 
-	t.client.Disconnect(0)
+		t.client.Disconnect(0)
+	}
 }

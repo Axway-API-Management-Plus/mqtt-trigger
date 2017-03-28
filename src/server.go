@@ -7,6 +7,7 @@ import (
 )
 
 type Server struct {
-	Config *tools.EtcdConfig
-	Mux    *mux.Router
+	Config         *tools.EtcdConfig
+	Mux            *mux.Router
+	TriggerDefault TriggerDefaults
 }

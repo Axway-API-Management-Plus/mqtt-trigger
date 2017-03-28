@@ -1,0 +1,17 @@
+
+defaults:
+  url: http://localhost:8080/api/topic/
+  headers:
+  - "Content-Type: application/json"
+  broker: mqtt://localhost:1883
+  clientid: mqtt-trigger
+  username: mqtt-trigger
+  password : goodpass
+
+triggers:
+- name: simplest
+- name: all
+  topic: "/#-*"
+- name: activemq
+  topic: activemq/#
+  broker: mqtt://localhost:8883

@@ -2,6 +2,15 @@ package main
 
 import log "github.com/Sirupsen/logrus"
 
+type TriggerDefaults struct {
+	URL      string   //base url (url+triggerName)
+	Headers  []string //default headers ("Content-Type: application/json")
+	Broker   string   //default broker url
+	ClientID string   //default base for ClientID (clientID+"-"+triggerName)
+	Username string   //default username for broker
+	Password string   //default password for broker
+}
+
 type TriggerConf struct {
 	Name string `jsonapi:"primary,mqtt"`
 
@@ -28,7 +37,7 @@ func TriggerConfInit(server *Server) {
 		//panic(triggerLogPrefix + " Conf - Cannot get trigger configuration")
 	}
 	for _, trigger := range triggers {
-		runtimeTriggerSet(trigger)
+		runtimeTriggerSet(trigger, &server.TriggerDefault)
 	}
 }
 
@@ -46,7 +55,7 @@ func TriggerConfWatch(server *Server) {
 				runtimeTriggerDelete(key)
 			} else if action == "set" {
 				log.Println(triggerLogPrefix+" Conf watch - set -", triggerConfPath, key, trigger.Name, trigger)
-				runtimeTriggerSet(&trigger)
+				runtimeTriggerSet(&trigger, &server.TriggerDefault)
 			} else {
 				log.Errorln(triggerLogPrefix+" Conf watch - unknown action", triggerConfPath, key, action)
 			}

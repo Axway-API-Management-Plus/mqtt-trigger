@@ -1,46 +1,42 @@
 variables:
-  NODEJS_ORG_MIRROR: http://central.ecd.axway.int/content/repositories/nodejs-releases/
-  IMAGE: ${DOCKER_SNAPSHOT_REGISTRY}/jdavanne/mqtt-trigger:$CI_BUILD_REF
-
+  DOCKER_SNAPSHOT_REGISTRY: registry.axwaytest.net
+  IMAGE: ${DOCKER_SNAPSHOT_REGISTRY}/jdavanne/mqtt-proxy:$CI_BUILD_REF
+  NAME: mqtt-trigger
+image: docker:latest
 stages:
   - build
-  - package
   - test
+  - deploy
 
-module_tests:
-  image: golang
+build:
   stage: build
+  image: golang:latest
   script:
-    - make deps-install
-    - make build
+  - make deps-install
+  - make build
   tags:
-    - shared
-
-docker-build:
-  image: gitlab/dind:latest
-  before_script:
-    - echo login to docker registry with $DOCKER_REGISTRY_USER
-    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD registry.ecd.axway.int
-  stage: package
-  script:
-    - docker build -t ${IMAGE}-build .
-    - docker run --rm ${IMAGE}-build tar cz $(NAME) >$(NAME).tar.gz
-    - docker build -t ${IMAGE} -f Dockerfile.small .
-    - docker rmi ${IMAGE}-build
-    - docker push ${IMAGE}
-  tags:
-    - shared
-
-integration_tests:
-  image: gitlab/dind:latest
-  variables:
-    DEV_SUFFIX: "-ci"
-    ST_AGENT_BASE_IMAGE: "registry.ecd.axway.int/cloudmind/st-agent-ci"
+  - shared
+test:
   stage: test
+  image: tmaier/docker-compose
+  before_script:
+  - docker info
   script:
-    - echo login to docker registry with $DOCKER_REGISTRY_USER
-    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD registry.ecd.axway.int
-    - docker-compose -f docker-compose.test.yml build
-    - docker-compose -f docker-compose.test.yml run sut
+  - docker-compose -f docker-compose.test.yml down
+  - docker-compose -f docker-compose.test.yml build
+  - docker-compose -f docker-compose.test.yml run sut
+  - docker-compose -f docker-compose.test.yml down
   tags:
-    - shared
+  - shared
+deploy:
+  stage: deploy
+  before_script:
+  - docker info
+  script:
+  - docker build -t ${IMAGE}-build .
+  - docker run --rm ${IMAGE}-build tar cz ${NAME} >${NAME}.tar.gz
+  - docker build -t ${IMAGE} -f Dockerfile.small .
+  - docker rmi ${IMAGE}-build
+  #- docker push ${IMAGE}
+  tags:
+  - shared
