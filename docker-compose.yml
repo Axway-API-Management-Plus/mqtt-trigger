@@ -6,30 +6,18 @@ services:
     environment:
       PORT: 8080
       ETCD_URLS: http://etcd:2379
-    ports:
-    - 8088:8080
+      CONF: "./mqtt-trigger.yml"
     tty: true
 
-  etcd:
-    image: "quay.io/coreos/etcd"
-    volumes:
-      - /usr/share/ca-certificates/:/etc/ssl/certs
+  api:
+    build: ./tests/api
     ports:
-      - "4001:4001"
-      - "2380:2380"
-      - "2379:2379"
-    #mem_limit: 128m
-    environment:
-      GOMAXPROCS: 2
-    command:
-    - /usr/local/bin/etcd
-    - -advertise-client-urls=http://0.0.0.0:2379
-    - -listen-client-urls=http://0.0.0.0:2379
+    - 3000:3000
 
   mosquitto:
     image: eclipse-mosquitto
     ports:
-      - 9883:1883   # MQTT
+      - 1883:1883   # MQTT
       - 9001:9001
     volumes:
       - /mosquitto/data

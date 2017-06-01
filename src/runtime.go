@@ -55,7 +55,7 @@ func TriggerInit(trigger *TriggerRuntime, triggerConf *TriggerConf, triggerDefau
 	}
 
 	if len(trigger.Headers) == 0 {
-		trigger.Headers = trigger.Headers
+		trigger.Headers = triggerDefault.Headers
 	}
 
 	trigger.hash = trigger.URL +
@@ -65,6 +65,7 @@ func TriggerInit(trigger *TriggerRuntime, triggerConf *TriggerConf, triggerDefau
 		trigger.Password +
 		trigger.ClientId +
 		trigger.Topic
+	log.Println(triggerLogPrefix+" Initialized - ", trigger)
 }
 
 func runtimeTriggerSet(triggerConf *TriggerConf, triggerDefaults *TriggerDefaults) {
@@ -116,7 +117,7 @@ func (t *TriggerRuntime) processMessage(mqttclient MQTT.Client, msg MQTT.Message
 	}*/
 
 	resp, err := client.Do(req)
-	defer resp.Body.Close()
+	//defer resp.Body.Close()
 
 	if err != nil {
 		log.Println(triggerLogPrefix+" Error sending message", msg.MessageID(), msg.Topic(), err)
