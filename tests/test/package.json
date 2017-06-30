@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --use_strict --harmony-async-await --reporter spec --bail *.js"
+    "test": "mocha --use_strict --reporter spec --bail *.js"
   },
   "author": "",
   "license": "ISC",

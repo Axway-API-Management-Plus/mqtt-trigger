@@ -6,9 +6,9 @@ import (
 	"os"
 	"strconv"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 
 	tools "./tools"
 )

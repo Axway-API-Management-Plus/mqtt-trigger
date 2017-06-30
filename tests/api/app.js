@@ -1,6 +1,11 @@
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
+
+process.on('SIGTERM', function () {
+  process.exit(0);
+});
+
 app.use(bodyParser.json())
 
 app.all(/\/.*/, function (req, res) {

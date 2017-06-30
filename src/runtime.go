@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	MQTT "github.com/eclipse/paho.mqtt.golang"
+	log "github.com/sirupsen/logrus"
 )
 
 type TriggerRuntime struct {
@@ -120,7 +120,7 @@ func (t *TriggerRuntime) processMessage(mqttclient MQTT.Client, msg MQTT.Message
 	//defer resp.Body.Close()
 
 	if err != nil {
-		log.Println(triggerLogPrefix+" Error sending message", msg.MessageID(), msg.Topic(), err)
+		log.Errorln(triggerLogPrefix+" Error sending message", msg.MessageID(), msg.Topic(), err)
 		return
 	}
 
@@ -130,7 +130,7 @@ func (t *TriggerRuntime) processMessage(mqttclient MQTT.Client, msg MQTT.Message
 		if err != nil {
 			return
 		}
-		log.Println(triggerLogPrefix, "Response Body", string(body))
+		log.Errorln(triggerLogPrefix, "Response Body", string(body))
 	}
 }
 

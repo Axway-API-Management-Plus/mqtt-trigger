@@ -5,7 +5,6 @@ services:
     build: .
     environment:
       PORT: 8080
-      ETCD_URLS: http://etcd:2379
       CONF: "./mqtt-trigger.yml"
     tty: true
 

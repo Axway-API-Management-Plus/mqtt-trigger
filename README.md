@@ -9,8 +9,6 @@ mqtt-trigger [OPTIONS]
 Usage of ./mqtt-trigger:
   -conf string
     	conffile
-  -etcd-urls string
-    	urls to etcd (default "http://localhost:2379")
   -http-headers string
     	headers ( 'key1 : value1, key2: value2' )
   -http-url string
@@ -36,7 +34,6 @@ docker-compose -f docker-compose.yml up
 
 ### By Configuration file
 ```yaml
-
 defaults:
   url: http://localhost:8080/api/topic/
   headers:
@@ -53,14 +50,7 @@ triggers:
 - name: activemq
   topic: activemq/#
   broker: mqtt://localhost:8883
-
 ```
-
-
-### By API (with etcd enabled for persistence)
-Use API to configure client...
-
-
 
 ## Build standalone binary:
 Prerequisites : `golang`
@@ -78,9 +68,7 @@ docker build -t mqtt-trigger:dev .
 ```
 make docker
   -or-
-docker build -t mqtt-trigger:dev .
-docker run --rm mqtt-trigger:dev tar cz mqtt-trigger >mqtt-trigger.tar.gz
-docker build -t mqtt-trigger -f Dockerfile.small .
+docker build -t mqtt-trigger .
 ```
 
 ## Test
@@ -104,34 +92,18 @@ make docker-test
 }
 ```
 
-## API
-#### GET /mqtt-triggers
-List all triggers
-
-#### GET /mqtt-triggers/{trigger-name}
-Get a single trigger
-
-#### POST /mqtt-triggers
-Create a trigger
-
-#### DELETE /mqtt-triggers
-Remove all triggers
-
-#### DELETE /mqtt-triggers/{trigger-name}
-Remove a specific trigger
-
-#### GET /status
-Get node status
-
 ## Todo
-- [Done]Add default configuration
-- [Done] Add a static configuration file
+- Add TLS for the trigger
+- Add TLS for the MQTT trigger 
 - Add a web based configuration file, with configurable refresh (30s)
-- Add a disable REST Api hook
-- Add a disable etcd : store config in file (json-like)
-- [Done] Coalesce Broker configuration (Broker section ?)
-- Distribute work across nodes
+- Add auto refresh of configuration (inotify?)
 
 ## Limitations
 - One Node only !!!! : No distribution across nodes
 - ClientID MUST be unique !
+
+## Changelog
+- 0.0.2
+  - configuration file support with default
+  - disabled etcd support
+  - use docker 17.05 for compact build

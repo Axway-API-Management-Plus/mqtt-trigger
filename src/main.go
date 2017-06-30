@@ -6,8 +6,7 @@ import (
 
 	"github.com/namsral/flag"
 
-	tools "./tools"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
@@ -23,7 +22,6 @@ func LogInit() {
 
 func main() {
 	var port int
-	var etcdURLs string
 	var conffile string
 
 	var HTTPUrl string
@@ -34,7 +32,7 @@ func main() {
 	var MQTTPassword string
 
 	flag.IntVar(&port, "port", 8080, "api port")
-	flag.StringVar(&etcdURLs, "etcd-urls", "", "urls to etcd")
+	//flag.StringVar(&etcdURLs, "etcd-urls", "", "urls to etcd ")
 	flag.StringVar(&conffile, "conf", "", "conffile")
 
 	flag.StringVar(&HTTPUrl, "http-url", "", "Default prefix for url to forward messages ( http-url + trigger-name)")
@@ -48,7 +46,7 @@ func main() {
 
 	LogInit()
 
-	etcds := strings.Split(etcdURLs, ",")
+	//etcds := strings.Split(etcdURLs, ",")
 	var wg sync.WaitGroup
 	wg.Add(1)
 	server := &Server{}
@@ -82,7 +80,7 @@ func main() {
 		server.TriggerDefault.Password = MQTTPassword
 	}
 
-	if etcdURLs != "" {
+	/*if etcdURLs != "" {
 		log.Println(triggerLogPrefix+" initializing etcd link %s %v", triggerConfPath, etcds)
 		server.Config = tools.NewEtcdConfig(etcds)
 		server.Config.Init()
@@ -95,13 +93,13 @@ func main() {
 
 		log.Println(triggerLogPrefix+" watching conf changes", triggerConfPath)
 		go TriggerConfWatch(server)
-	}
+	}*/
 
-	log.Println(triggerLogPrefix+" setting up API", triggerApiPath)
-	TriggerApiInit(server)
+	//log.Println(triggerLogPrefix+" setting up API", triggerApiPath)
+	//TriggerApiInit(server)
 
-	log.Println(triggerLogPrefix+" listening to http port", port)
-	ServerListenAndServe(server, port)
+	//log.Println(triggerLogPrefix+" listening to http port", port)
+	//ServerListenAndServe(server, port)
 
 	wg.Wait()
 }

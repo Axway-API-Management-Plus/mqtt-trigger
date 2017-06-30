@@ -1,0 +1,17 @@
+
+defaults:
+  url: http://sut:3000/api/topic
+  headers:
+  - "Content-Type: application/json"
+  broker: mqtt://mosquitto:1883
+  clientid: mqtt-trigger
+  username: mqtt-trigger
+  password : goodpass
+
+triggers:
+- name: simplest
+- name: all
+  topic: "all/#"
+- name: activemq
+  topic: activemq/#
+  broker: mqtt://mosquitto:1883
