@@ -1,7 +1,5 @@
 package main
 
-import "github.com/gorilla/mux"
-
 type TriggerDefaults struct {
 	URL      string   //base url (url+triggerName)
 	Headers  []string //default headers ("Content-Type: application/json")
@@ -29,6 +27,5 @@ var triggerApiPath = "/api/mqtt-triggers"
 var triggerLogPrefix = "Trigger MQTT"
 
 type Server struct {
-	Mux            *mux.Router
 	TriggerDefault TriggerDefaults
 }

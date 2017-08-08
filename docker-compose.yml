@@ -4,7 +4,6 @@ services:
   mqtt-trigger:
     build: .
     environment:
-      PORT: 8080
       CONF: "./mqtt-trigger.yml"
     tty: true
 
@@ -18,7 +17,7 @@ services:
     ports:
       - 1883:1883   # MQTT
       - 9001:9001
-    volumes:
-      - /mosquitto/data
-      - /mosquitto/log
+#    volumes:
+#      - /mosquitto/data
+#      - /mosquitto/log
 #      - ./tests/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf

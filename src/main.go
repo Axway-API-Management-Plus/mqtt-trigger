@@ -21,7 +21,7 @@ func LogInit() {
 }
 
 func main() {
-	var port int
+	//var port int
 	var conffile string
 
 	var HTTPUrl string
@@ -31,7 +31,7 @@ func main() {
 	var MQTTUsername string
 	var MQTTPassword string
 
-	flag.IntVar(&port, "port", 8080, "api port")
+	//flag.IntVar(&port, "port", 8080, "api port")
 	//flag.StringVar(&etcdURLs, "etcd-urls", "", "urls to etcd ")
 	flag.StringVar(&conffile, "conf", "", "conffile")
 

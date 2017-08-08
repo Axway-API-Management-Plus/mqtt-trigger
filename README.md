@@ -21,8 +21,6 @@ Usage of ./mqtt-trigger:
     	Default MQTT password
   -mqtt-username string
     	Default MQTT username
-  -port int
-    	api port (default 8080)
 ```
 
 Test full environment with docker
@@ -94,7 +92,7 @@ make docker-test
 
 ## Todo
 - Add TLS for the trigger
-- Add TLS for the MQTT trigger 
+- Add TLS for the MQTT trigger
 - Add a web based configuration file, with configurable refresh (30s)
 - Add auto refresh of configuration (inotify?)
 
@@ -107,3 +105,17 @@ make docker-test
   - configuration file support with default
   - disabled etcd support
   - use docker 17.05 for compact build
+
+## Contributing
+
+Please read [Contributing.md](https://github.com/Axway-API-Management-Plus/Common/blob/master/Contributing.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Team
+
+![alt text][Axwaylogo] Axway Team
+
+[Axwaylogo]: https://github.com/Axway-API-Management/Common/blob/master/img/AxwayLogoSmall.png  "Axway logo"
+
+
+## License
+[Apache License 2.0](/LICENSE)

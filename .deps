@@ -1,8 +1,5 @@
-github.com/coreos/etcd/client
 github.com/eclipse/paho.mqtt.golang
 github.com/fsnotify/fsnotify
-github.com/gorilla/handlers
-github.com/gorilla/mux
 github.com/namsral/flag
 github.com/sirupsen/logrus
 github.com/x-cray/logrus-prefixed-formatter

@@ -4,7 +4,7 @@ DATE := $(shell date +'%Y-%M-%d_%H:%M:%S')
 BUILD := $(shell git rev-parse HEAD | cut -c1-8)
 LDFLAGS :=-ldflags "-s -w -X=main.Version=$(VERSION) -X=main.Build=$(BUILD) -X=main.Date=$(DATE)"
 IMAGE := jdavanne/$(NAME)
-REGISTRY := registry.dctest.docker-cluster.axwaytest.net/internal
+REGISTRY := davinci976
 PUBLISH := $(REGISTRY)/$(IMAGE)
 .PHONY: docker all
 
@@ -36,7 +36,7 @@ test-specific:
 	go test -v $$(ls *.go | grep -v "_test.go") $(ARGS)
 
 deps:
-	go list -f '{{range .TestImports}}{{.}} {{end}} {{range .Imports}}{{.}} {{end}}' ./... | sed 's/ /\n/g' | grep -e "^[^/_\.][^/]*\.[^/]*/" |sort -u >.deps
+	go list -f '{{range .TestImports}}{{.}} {{end}} {{range .Imports}}{{.}} {{end}}' ./src/... | tr ' ' '\n' | grep -e "^[^/_\.][^/]*\.[^/]*/" |sort -u >.deps
 
 deps-install:
 	go get -v $$(cat .deps)
