@@ -6,6 +6,7 @@ COPY Makefile .deps ./
 RUN make deps-install
 
 COPY . ./
+COPY ./tests/mqtt-trigger-test.yml ./
 RUN make
 
 RUN cp /app/src/mqtt-trigger/mqtt-trigger /usr/bin
