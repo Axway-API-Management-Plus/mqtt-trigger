@@ -4,8 +4,10 @@ services:
   mqtt-trigger:
     build: .
     environment:
-      CONF: "./mqtt-trigger.yml"
+      CONF: "/etc/mqtt-trigger.yml"
     tty: true
+    volumes:
+    - "./mqtt-trigger.yml:/etc/mqtt-trigger.yml:ro"
 
   api:
     build: ./tests/api
