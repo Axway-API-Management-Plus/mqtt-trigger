@@ -27,8 +27,21 @@ func (server *Server) TriggerConfFileInit(filename string) error {
 	}
 	log.Printf("--- t:\n%v\n\n", conffile)
 
+	conffileTriggers := make(map[string]*TriggerConf)
 	for _, trigger := range conffile.Triggers {
-		runtimeTriggerSet(trigger, &conffile.Defaults)
+		conffileTriggers[trigger.Name] = trigger
+	}
+
+	//Remove removed trigger
+	for name, trigger := range triggers {
+		if trigger.origin == "file" && conffileTriggers[name] == nil {
+			runtimeTriggerDelete(name)
+		}
+	}
+
+	// Create or modify defined trigger
+	for _, trigger := range conffile.Triggers {
+		runtimeTriggerSet("file", trigger, &conffile.Defaults)
 	}
 
 	return nil

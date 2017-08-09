@@ -13,6 +13,7 @@ import (
 
 type TriggerRuntime struct {
 	TriggerConf
+	origin string
 	status string
 	client MQTT.Client
 	hash   string
@@ -25,8 +26,9 @@ func TriggerRuntimeInit(server *Server) {
 	triggers = make(map[string]*TriggerRuntime)
 }
 
-func TriggerInit(trigger *TriggerRuntime, triggerConf *TriggerConf, triggerDefault *TriggerDefaults) {
+func TriggerInit(trigger *TriggerRuntime, origin string, triggerConf *TriggerConf, triggerDefault *TriggerDefaults) {
 	trigger.TriggerConf = *triggerConf
+	trigger.origin = origin
 
 	if trigger.Username == "" {
 		trigger.Username = triggerDefault.Username
@@ -68,10 +70,10 @@ func TriggerInit(trigger *TriggerRuntime, triggerConf *TriggerConf, triggerDefau
 	log.Println(triggerLogPrefix+" Initialized - ", trigger)
 }
 
-func runtimeTriggerSet(triggerConf *TriggerConf, triggerDefaults *TriggerDefaults) {
+func runtimeTriggerSet(origin string, triggerConf *TriggerConf, triggerDefaults *TriggerDefaults) {
 	trigger := new(TriggerRuntime)
 
-	TriggerInit(trigger, triggerConf, triggerDefaults)
+	TriggerInit(trigger, origin, triggerConf, triggerDefaults)
 
 	if triggers[trigger.Name] == nil || triggers[trigger.Name].hash != trigger.hash {
 		if triggers[trigger.Name] == nil {
@@ -115,6 +117,7 @@ func (t *TriggerRuntime) processMessage(mqttclient MQTT.Client, msg MQTT.Message
 			req.Header.Add(key, value)
 		}
 	}*/
+	req.Header.Add("TOPIC", msg.Topic())
 
 	resp, err := client.Do(req)
 	//defer resp.Body.Close()

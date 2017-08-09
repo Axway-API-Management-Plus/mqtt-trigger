@@ -103,17 +103,15 @@ make docker-test
 }
 ```
 
-## Todo
-- Add TLS for the trigger
-- Add TLS for the MQTT trigger
-- Add a web based configuration file, with configurable refresh (30s)
-- Add auto refresh of configuration (inotify?)
-
 ## Limitations
 - One Node only !!!! : No distribution across nodes
 - ClientID MUST be unique !
+- No TLS support for the trigger
 
 ## Changelog
+- 0.0.3
+  - add TOPIC header to the HTTP Post request
+  - fix dynamic reload of config
 - 0.0.2
   - configuration file support with default
   - disabled etcd support

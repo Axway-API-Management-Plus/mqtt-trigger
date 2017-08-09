@@ -20,6 +20,10 @@ func LogInit() {
 	log.SetLevel(log.DebugLevel)
 }
 
+var Version string
+var Build string
+var Date string
+
 func main() {
 	//var port int
 	var conffile string
@@ -33,7 +37,7 @@ func main() {
 
 	//flag.IntVar(&port, "port", 8080, "api port")
 	//flag.StringVar(&etcdURLs, "etcd-urls", "", "urls to etcd ")
-	flag.StringVar(&conffile, "conf", "", "conffile")
+	flag.StringVar(&conffile, "conf", "./mqtt-trigger.yml", "conffile")
 
 	flag.StringVar(&HTTPUrl, "http-url", "", "Default prefix for url to forward messages ( http-url + trigger-name)")
 	flag.StringVar(&HTTPHeaders, "http-headers", "", "headers ( 'key1 : value1, key2: value2' )")
@@ -45,7 +49,7 @@ func main() {
 	flag.Parse()
 
 	LogInit()
-
+	log.Println("Starting mqtt-proxy - version:", Version, "build:", Build, " date:", Date)
 	//etcds := strings.Split(etcdURLs, ",")
 	var wg sync.WaitGroup
 	wg.Add(1)

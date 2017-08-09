@@ -141,10 +141,12 @@ describe('mqtt-trigger', () => {
       return new Promise(async (resolve, reject) => {
         app.post("/api/topic/simplest", (req, res) => {
           console.log("[test] got message xxx", req.body)
-           if (req.body.msg == "simplest") {
-             resolve("")
-           } else {
+           if (req.body.msg !== "simplest") {
              reject(new Error("bad message"))
+           } else if (req.header("topic") !== "simplest") {
+             reject(new Error("bad topic"))
+           } else {
+             resolve("")
            }
            res.status(200).send({})
         });
