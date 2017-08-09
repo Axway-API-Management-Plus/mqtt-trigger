@@ -1,6 +1,19 @@
-# MQTT-Trigger
+# Description
+`mqtt-trigger` subscribes to MQTT topic(s) and calls an REST APIs
 
-`mqtt-trigger` subscribe to MQTT topic and call an REST API
+## API Management Version Compatibilty
+This artefact can be used with every API Management Plus version
+
+## Prerequisites
+- docker 17.06 (and docker-compose)
+- MQTT Broker   : activemq / rabbitmq / mosquitto / ...
+- Policy Engine : Axway API Gateway or custom engine (see [./tests/policy] )
+
+## Configure your policy engine
+Triggers are set inside mqt-trigger.yml, for example all Messages on topic #simplest are forwarded to API Management. API Endpoint and other Parameters can be modified inside the mqtt-trigger.yml
+
+See Axway API Gateway samples for mqtt in : `./api-gateway-policies/mqtt-trigger-apigw-policy.xml`
+In API Gateway Policy Studio, please use Import Configuration Fragment to upload the policy
 
 ## Start
 Command Line
