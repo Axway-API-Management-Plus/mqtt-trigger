@@ -7,8 +7,10 @@
 
 [Image1]: https://github.com/Axway-API-Management-Plus/mqtt-trigger/blob/master/readme/mqtt-trigger01.png "Image1"
 
+![alt text](https://img.shields.io/docker/automated/davinci1976/mqtt-trigger.svg)
+![alt text](https://img.shields.io/docker/build/davinci1976/mqtt-trigger.svg)
 
-## API Management Version Compatibilty
+## API Management Version Compatibility
 This artefact can be used with every API Management Plus version
 
 ## Prerequisites
