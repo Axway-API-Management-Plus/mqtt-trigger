@@ -1,3 +1,6 @@
+![alt text](https://img.shields.io/docker/automated/davinci1976/mqtt-trigger.svg)
+![alt text](https://img.shields.io/docker/build/davinci1976/mqtt-trigger.svg)
+
 # Description
 `mqtt-trigger` subscribes to MQTT topic(s) and calls an REST APIs
 
@@ -6,9 +9,6 @@
 ![alt text][Image1]
 
 [Image1]: https://github.com/Axway-API-Management-Plus/mqtt-trigger/blob/master/readme/mqtt-trigger01.png "Image1"
-
-![alt text](https://img.shields.io/docker/automated/davinci1976/mqtt-trigger.svg)
-![alt text](https://img.shields.io/docker/build/davinci1976/mqtt-trigger.svg)
 
 ## API Management Version Compatibility
 This artefact can be used with every API Management Plus version
@@ -55,21 +55,29 @@ docker-compose -f docker-compose.yml up
 ### By Configuration file
 ```yaml
 defaults:
-  url: http://localhost:8080/api/topic/
+  url: http://api:3000/api/topic
   headers:
   - "Content-Type: application/json"
-  broker: mqtt://localhost:1883
+  broker: mqtt://mosquitto:1883
   clientid: mqtt-trigger
   username: mqtt-trigger
   password : goodpass
 
 triggers:
 - name: simplest
+- name: override
+  topic: override-topic
+  url: /override-uri
+  clientid: override-id
+  username: override-username
+  headers:
+  - "Content-Type: application/json"
+  - "Override-Header : override-header-value"
 - name: all
-  topic: "/#-*"
+  topic: "all/#"
 - name: activemq
   topic: activemq/#
-  broker: mqtt://localhost:8883
+  broker: mqtt://mosquitto:1883
 ```
 
 ## Build standalone binary:
@@ -113,13 +121,15 @@ make docker-test
 ```
 
 ## Limitations
+
 - One Node only !!!! : No distribution across nodes
 - ClientID MUST be unique !
 - No TLS support for the trigger
 
 ## Changelog
+
 - 0.0.4
-  - add MQTT-TOPIC (replaces TOPIC header), MQTT-CLIENT-ID, MQTT-USERNAME, TRIGGER-NAME
+  - add MQTT-TOPIC (replaces TOPIC), MQTT-CLIENT-ID, MQTT-USERNAME, TRIGGER-NAME headers
 - 0.0.3
   - add TOPIC header to the HTTP Post request
   - fix dynamic reload of config
