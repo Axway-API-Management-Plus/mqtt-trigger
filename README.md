@@ -1,6 +1,13 @@
 # Description
 `mqtt-trigger` subscribes to MQTT topic(s) and calls an REST APIs
 
+
+
+![alt text][Image1]
+
+[Image1]: https://github.com/Axway-API-Management-Plus/mqtt-trigger/blob/master/readme/mqtt-trigger01.png "Image1"
+
+
 ## API Management Version Compatibilty
 This artefact can be used with every API Management Plus version
 
