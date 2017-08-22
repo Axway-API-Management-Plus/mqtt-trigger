@@ -112,12 +112,11 @@ func (t *TriggerRuntime) processMessage(mqttclient MQTT.Client, msg MQTT.Message
 		}
 		req.Header.Add(key, value)
 	}
-	/*if t.Headers != nil {
-		for key, value := range *t.Headers {
-			req.Header.Add(key, value)
-		}
-	}*/
-	req.Header.Add("TOPIC", msg.Topic())
+
+	req.Header.Add("MQTT-TOPIC", msg.Topic())
+	req.Header.Add("MQTT-CLIENT-ID", t.ClientId)
+	req.Header.Add("MQTT-USERNAME", t.Username)
+	req.Header.Add("TRIGGER-NAME", t.Name)
 
 	resp, err := client.Do(req)
 	//defer resp.Body.Close()

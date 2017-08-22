@@ -10,6 +10,14 @@ defaults:
 
 triggers:
 - name: simplest
+- name: override
+  topic: override-topic
+  url: /override-uri
+  clientid: override-id
+  username: override-username
+  headers:
+  - "Content-Type: application/json"
+  - "Override-Header : override-header-value"
 - name: all
   topic: "all/#"
 - name: activemq

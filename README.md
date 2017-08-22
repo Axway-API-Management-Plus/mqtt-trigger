@@ -93,7 +93,7 @@ make docker-test
 {
   name:    "string",
   topic:   "string",     // Default: <name>
-  url:     "string",     // Default (conffile.Defaults.url || -mqtt-url ) <name>
+  url:     "string",     // Default (conffile.Defaults.url || conffile.Defaults.url + -mqtt-url["/xxxx"] || -mqtt-url ) <name>
   headers: [ "string" ], // Default: "content-type: application/json" || conffile.Defaults.headers || -mqtt-headers
 
   broker:   "string",    // Default: conffile.Defaults.Broker || -mqtt-broker
@@ -109,6 +109,8 @@ make docker-test
 - No TLS support for the trigger
 
 ## Changelog
+- 0.0.4
+  - add MQTT-TOPIC (replaces TOPIC header), MQTT-CLIENT-ID, MQTT-USERNAME, TRIGGER-NAME
 - 0.0.3
   - add TOPIC header to the HTTP Post request
   - fix dynamic reload of config

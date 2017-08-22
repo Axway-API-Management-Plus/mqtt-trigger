@@ -1,4 +1,4 @@
-VERSION := 0.0.3
+VERSION := 0.0.4
 NAME := mqtt-trigger
 DATE := $(shell date +'%Y-%M-%d_%H:%M:%S')
 BUILD := $(shell git rev-parse HEAD | cut -c1-8)

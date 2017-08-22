@@ -137,21 +137,56 @@ describe('mqtt-trigger', () => {
       })
     })
 
-    it('test default config file', () => {
+    it('test default config file - simplest', () => {
       return new Promise(async (resolve, reject) => {
         app.post("/api/topic/simplest", (req, res) => {
-          console.log("[test] got message xxx", req.body)
+          console.log("[test] got message xxx - verifying", req.body)
            if (req.body.msg !== "simplest") {
              reject(new Error("bad message"))
-           } else if (req.header("topic") !== "simplest") {
+           } else if (req.header("mqtt-topic") !== "simplest") {
+             reject(new Error("bad topic"))
+           } else if (req.header("mqtt-username") !== "mqtt-trigger") {
+             reject(new Error("bad topic"))
+           } else if (req.header("mqtt-client-id") !== "mqtt-trigger-simplest") {
              reject(new Error("bad topic"))
            } else {
              resolve("")
+             console.log("[test] got message xxx - OK", req.body)
+             return res.status(200).send({})
            }
+           console.log("[test] got message xxx - KO", req.body)
            res.status(200).send({})
         });
         console.log("[test] mqtt trigger")
         await mqtt_publish("simplest", '{"msg": "simplest"}');
+      })
+    })
+    it('test default config file - override', () => {
+      return new Promise(async (resolve, reject) => {
+        app.post("/api/topic/override-uri", (req, res) => {
+           console.log("[test] got message xxx - verifying", req.body)
+           if (req.body.msg !== "override-content") {
+             reject(new Error("bad message"))
+           } else if (req.header("mqtt-topic") !== "override-topic") {
+             reject(new Error("bad topic"))
+           } else if (req.header("mqtt-username") !== "override-username") {
+             reject(new Error("bad topic"))
+           } else if (req.header("mqtt-client-id") !== "override-id") {
+             reject(new Error("bad topic"))
+           } else if (req.header("override-header") !== "override-header-value") {
+             reject(new Error("bad header"))
+           } else if (req.header("trigger-name") !== "override") {
+             reject(new Error("bad trigger-name"))
+           } else {
+             resolve("")
+             console.log("[test] got message xxx - OK", req.body)
+             return res.status(200).send({})
+           }
+           console.log("[test] got message xxx - KO", req.body)
+           res.status(200).send({})
+        });
+        console.log("[test] mqtt trigger")
+        await mqtt_publish("override-topic", '{"msg": "override-content"}');
       })
     })
 })
